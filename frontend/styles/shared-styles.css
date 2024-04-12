@@ -1,0 +1,17 @@
+/* List view */
+.list-view .content {
+display: flex; 
+}
+.list-view .grid-estudiante {
+flex: 2; 
+}
+.list-view .estudiante-form {
+flex: 1;
+padding: var(--lumo-space-m); 
+}
+@media all and (max-width: 1100px) { 
+.list-view.editing .toolbar,
+.list-view.editing .grid-estudiante {
+display: none;
+    }
+}
