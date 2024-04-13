@@ -1,4 +1,4 @@
-package com.example.webalumno.vaadinui;
+package com.example.webalumno.vaadinui.ListEstudiante;
 
 import com.example.webalumno.entidad.Estudiante;
 import com.vaadin.flow.component.Component;

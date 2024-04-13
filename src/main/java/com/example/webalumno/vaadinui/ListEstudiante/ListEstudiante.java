@@ -1,24 +1,26 @@
-package com.example.webalumno.vaadinui;
+package com.example.webalumno.vaadinui.ListEstudiante;
 
 import com.example.webalumno.servicios.GradoServicio;
+import com.example.webalumno.vaadinui.MainLayout;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.PageTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.webalumno.entidad.Estudiante;
 import com.example.webalumno.entidad.Grado;
 import com.example.webalumno.servicios.EstudianteServicio;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
-@Route("")
-@CssImport("./styles/shared-styles.css")
-public class MainView extends VerticalLayout {
+@Route(value="",layout = MainLayout.class)
+@PageTitle("Lista Estudiantes")
+public class ListEstudiante extends VerticalLayout {
 
     // #1 Crear Data Grid con la clase de la entidad del servicio
     private Grid<Estudiante> gridEstudiante = new Grid<>(Estudiante.class);
@@ -30,13 +32,13 @@ public class MainView extends VerticalLayout {
     @Autowired
     private EstudianteServicio estudianteServicio;
 
-    public MainView(EstudianteServicio estudianteServicio, GradoServicio gradoServicio) {
+    public ListEstudiante(EstudianteServicio estudianteServicio, GradoServicio gradoServicio) {
 
         this.estudianteServicio = estudianteServicio;
 
         addClassName("list-view");
         setSizeFull();
-        configureFilter();
+        
         configureGrid();
 
         form = new EstudianteForm(gradoServicio.listarTodosLosGrados());
@@ -48,19 +50,26 @@ public class MainView extends VerticalLayout {
         content.addClassName("content");
         content.setSizeFull();
 
-        add(filterText, content);
+        add(getToolBar(), content);
 
         updateList();
 
         closeEditor();
     }
 
-    private void configureFilter() {
+    private HorizontalLayout getToolBar() {
         filterText.setPlaceholder("Filter by name...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         // invocar el updateList(); cada vez que l caja de texto cambie de estado
         filterText.addValueChangeListener(e -> updateList());
+
+        Button addContactButton = new Button("Add contact");
+        addContactButton.addClickListener(click -> addEstudiante());
+
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addContactButton);
+        toolbar.addClassName("toolbar");
+        return toolbar;
     }
 
     private void configureGrid() {
@@ -82,6 +91,11 @@ public class MainView extends VerticalLayout {
 
         gridEstudiante.asSingleSelect().addValueChangeListener(event -> editEstudiante(event.getValue()));
 
+    }
+
+    public void addEstudiante(){
+        gridEstudiante.asSingleSelect().clear();
+        editEstudiante(new Estudiante());
     }
 
     public void editEstudiante(Estudiante estudiante) {
